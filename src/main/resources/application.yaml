@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: portal
+  datasource:
+    url: jdbc:mysql://localhost:3306/portal_db?allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: click123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+    properties:
+      entityManagerFactoryInterface: jakarta.persistence.EntityManagerFactory
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8081
+  forward-headers-strategy: native
+
+springdoc:
+  use-management-port: false
+  show-actuator: false
+  api-docs:
+    server-url: http://localhost:8081
+    path: /v3/api-docs
+    path-to-match: /**
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  default-produces-media-type: application/json
+  override-with-generic-response: false
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_A_EXPIRATION}
+
+hashid:
+  salt: ${HASHID_SALT}
+  min-length: 8
