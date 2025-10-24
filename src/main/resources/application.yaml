@@ -1,21 +1,29 @@
 spring:
   application:
-    name: portal
+    name: auth-service
+
   datasource:
-    url: jdbc:mysql://localhost:3306/portal_db?allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mysql://127.0.0.1:3306/portal_db?allowPublicKeyRetrieval=true&useSSL=false
     username: root
     password: click123
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.MySQLDialect
     show-sql: true
     properties:
-      entityManagerFactoryInterface: jakarta.persistence.EntityManagerFactory
       hibernate:
         format_sql: true
-    hibernate:
-      ddl-auto: update
+
+  flyway:
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  kafka:
+    producer:
+      max-request-size: 20971520
 
 server:
   port: 8081
@@ -25,20 +33,30 @@ springdoc:
   use-management-port: false
   show-actuator: false
   api-docs:
-    server-url: http://localhost:8081
-    path: /v3/api-docs
-    path-to-match: /**
     enabled: true
+    path: /v3/api-docs
+    server-url: http://127.0.0.1:8080/auth-service
+  default-produces-media-type: application/json
+  override-with-generic-response: false
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
-  default-produces-media-type: application/json
-  override-with-generic-response: false
+  paths-to-match: "/**"
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
 
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_A_EXPIRATION}
 
 hashid:
-  salt: ${HASHID_SALT}
+  salt: 9VlqvY6RA4GJqqoDtV7RKhypGogOVB+v3BnpTYWOMglgFo3TWNOaJ5W9Zfw0YOeckqCdRoezuXTk+hqCLiZrHg==
   min-length: 8
+
+app:
+  jwt:
+    refresh-token-duration-ms: 604800000
