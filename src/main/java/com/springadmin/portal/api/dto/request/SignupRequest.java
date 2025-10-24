@@ -2,6 +2,9 @@ package com.springadmin.portal.api.dto.request;
 
 import java.util.List;
 
+import com.springadmin.portal.api.dto.validation.annotation.ValidPermissionID;
+import com.springadmin.portal.api.dto.validation.annotation.ValidRoleID;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -9,6 +12,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
+@ValidRoleID
+@ValidPermissionID
 public class SignupRequest {
     @Size(min = 2, max = 666, message = "Name must be between 2 and 666 characters")
     @NotBlank(message = "First name cannot be null")
@@ -33,7 +38,7 @@ public class SignupRequest {
 
     @NotEmpty(message = "Roles cannot be null")
     @Size(min = 1, message = "At least one role is required")
-    private List<Long> roles;
+    private List<String> roles;
 
     private List<String> permissions;
 

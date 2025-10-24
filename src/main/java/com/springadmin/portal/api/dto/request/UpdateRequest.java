@@ -1,6 +1,8 @@
 package com.springadmin.portal.api.dto.request;
 import java.util.List;
 
+import com.springadmin.portal.api.dto.validation.annotation.ValidPermissionID;
+import com.springadmin.portal.api.dto.validation.annotation.ValidRoleID;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -9,6 +11,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
+@ValidRoleID
+@ValidPermissionID
 public class UpdateRequest {
     @NotBlank(message = "First name cannot be null")
     @Pattern(regexp = "[a-zA-Z]{1,747}", message = "First name should only be characters, fitting in the 1-747 range")

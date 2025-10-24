@@ -15,8 +15,6 @@ public class UserSearchRequest {
     @Max(100)
     private int size = 10;
 
-    private String sortBy = "firstName";
-
     @Pattern(regexp = "asc|desc", flags = Pattern.Flag.CASE_INSENSITIVE)
     private String direction = "asc";
 }

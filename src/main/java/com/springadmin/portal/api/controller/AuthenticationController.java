@@ -70,17 +70,9 @@ public class AuthenticationController extends BaseController {
     }
     @GetMapping("/all-users")
     public ResponseEntity<ApiResponse<Page<UserResponse>>> getAllUsers(UserSearchRequest request) {
-
-        Sort.Direction sortDirection = Sort.Direction.fromOptionalString(request.getDirection())
-                .orElse(Sort.Direction.ASC);
-        Pageable pageable = PageRequest.of(
-                request.getPage(),
-                request.getSize(),
-                Sort.by(sortDirection, request.getSortBy())
-        );
-
+        Pageable pageable = PageRequest.of(request.getPage(),
+                request.getSize());
         Page<UserResponse> users = userService.getUsers(pageable).map(userMapper::toUserResponse);
-
         return buildResponse(users, true, HttpStatus.OK, CustomHttpStatus.S_FETCH_U);
     }
 

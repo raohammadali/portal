@@ -75,7 +75,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService, ICustom
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
                 throw new EmailAlreadyUsedException();
         }
-        List<Long> roleIds = signupRequest.getRoles();
+        List<Long> roleIds = signupRequest.getRoles().stream().map(hashIdUtil::decodeId).toList();
         List<Role> roles = roleRepository.findAllById(roleIds);
         User user = new User(
                 signupRequest.getFirstName(),
@@ -98,33 +98,25 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService, ICustom
         user.setPermissions(permissions);
         return userRepository.save(user);
         }
-        public User editUser(UpdateRequest dto,String email) {
+        public User editUser(UpdateRequest dto, String email) {
                 User user = userRepository.findByEmailIgnoreCase(email)
                         .orElseThrow(UserNotFoundException::new);
-
-                if (userRepository.existsByEmail(dto.getEmail()) && !user.getEmail().equals(dto.getEmail())) {
-                throw new EmailAlreadyUsedException();
-                }
-
+                if (!user.getEmail().equalsIgnoreCase(dto.getEmail()) && userRepository.existsByEmail(dto.getEmail()))
+                        throw new EmailAlreadyUsedException();
                 user.setFirstName(dto.getFirstName());
                 user.setLastName(dto.getLastName());
                 user.setEmail(dto.getEmail());
                 user.setPhone(dto.getPhone());
-
-                List<Role> roles = roleRepository.findAllById(dto.getRoles().stream().map(hashIdUtil::decodeId).toList());
-                List<Permission> permissions;
-
-                if (dto.getPermissions() == null || dto.getPermissions().isEmpty()) {
-                permissions = roles.stream()
-                        .flatMap(role -> role.getPermissions().stream())
-                        .toList();
-                } else {
-                permissions = permissionRepository
-                        .findAllById(dto.getPermissions().stream().map(hashIdUtil::decodeId).toList());
-                }
-
+                List<Role> roles = roleRepository.findAllById(
+                        dto.getRoles().stream().map(hashIdUtil::decodeId).toList()
+                );
                 user.setRoles(roles);
-                user.setPermissions(permissions);
+                user.setPermissions(
+                        (dto.getPermissions() == null || dto.getPermissions().isEmpty())
+                                ? roles.stream().flatMap(r -> r.getPermissions().stream()).distinct().toList()
+                                : permissionRepository.findAllById(dto.getPermissions().stream().map(hashIdUtil::decodeId).toList())
+                );
+
                 return userRepository.save(user);
         }
 
