@@ -2,6 +2,7 @@ package com.springadmin.portal.api.dto.request;
 
 import java.util.List;
 
+import com.springadmin.portal.api.dto.validation.annotation.UniqueEmail;
 import com.springadmin.portal.api.dto.validation.annotation.ValidPermissionID;
 import com.springadmin.portal.api.dto.validation.annotation.ValidRoleID;
 
@@ -26,8 +27,10 @@ public class SignupRequest {
 
     @NotBlank(message = "Email cannot be null")
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+    @UniqueEmail
     private String email;
 
+    @Size(min = 2, max = 10, message = "too big number")
     @NotBlank(message = "Phone number cannot be null")
     @Pattern(regexp = "^\\+[\\d]+$", message = "Phone number can only consist of digits")
     private String phone;
